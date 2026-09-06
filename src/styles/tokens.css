@@ -1,0 +1,68 @@
+/* ------------------------------------------------------------------
+   HYDROLINE — design tokens
+
+   Light architectural system: off-white ground, near-black type, hairline
+   structure. Blue and red exist only as technical signal — 1px routes, dots,
+   active states — never as surfaces.
+   ------------------------------------------------------------------ */
+
+:root {
+  /* --- ground --- */
+  --page: #f5f6f7;
+  --surface: #ffffff;
+
+  /* --- ink --- */
+  --ink: #151719;
+  --ink-2: #1d2023;
+  /* Token muted is the spec value; body copy uses the slightly deeper
+     --body so running text clears 4.5:1 on --page. */
+  --muted: #6f7479;
+  --body: #5c6166;
+
+  /* --- structure --- */
+  --line: #dde1e4;
+  --line-soft: rgba(21, 23, 25, 0.1);
+  --line-hair: rgba(21, 23, 25, 0.06);
+
+  /* --- signal: cold water / hot water --- */
+  --cold: #2677c9;
+  --cold-ink: #1e63ab;
+  --hot: #d84b3e;
+  --hot-ink: #b93a2e;
+
+  /* --- the one dark chapter --- */
+  --dark: #151719;
+  --dark-2: #1d2023;
+  --dark-line: rgba(255, 255, 255, 0.14);
+  --dark-muted: #9aa0a5;
+
+  /* --- type --- */
+  --font: 'Geist Variable', 'Geist', 'Inter', system-ui, -apple-system, sans-serif;
+
+  --step-micro: clamp(0.625rem, 0.6rem + 0.08vw, 0.6875rem);
+  --step-label: clamp(0.6875rem, 0.66rem + 0.1vw, 0.75rem);
+  --step-body: clamp(0.95rem, 0.92rem + 0.14vw, 1.0625rem);
+  --step-lead: clamp(1.0625rem, 1rem + 0.35vw, 1.3125rem);
+  --step-h3: clamp(1.25rem, 1.1rem + 0.7vw, 1.75rem);
+  --step-h2: clamp(2rem, 1.2rem + 3.4vw, 4.5rem);
+  --step-h1: clamp(2.6rem, 1.3rem + 5.6vw, 6.5rem);
+
+  --track-label: 0.16em;
+  --track-display: -0.035em;
+
+  /* --- layout --- */
+  --gutter: clamp(1.25rem, 0.85rem + 2.2vw, 3.5rem);
+  --shell: 1480px;
+  --section-y: clamp(4.5rem, 2.5rem + 7vw, 10rem);
+  --header-h: 72px;
+
+  /* --- motion --- */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  /* --- depth --- */
+  --z-canvas: 2;
+  --z-copy: 3;
+  --z-header: 60;
+}

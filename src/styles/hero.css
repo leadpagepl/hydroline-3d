@@ -1,0 +1,319 @@
+/* ==================================================================
+   Hero — editorial copy and an interactive valve assembly
+   ================================================================== */
+
+.hero {
+  position: relative;
+  padding-top: calc(var(--header-h) + clamp(1.5rem, 5vh, 4rem));
+  padding-bottom: clamp(3rem, 7vw, 6rem);
+}
+
+.hero__inner {
+  position: relative;
+  display: grid;
+  align-items: center;
+  min-height: calc(100svh - var(--header-h) - clamp(1.5rem, 5vh, 4rem));
+}
+
+.hero__copy {
+  position: relative;
+  z-index: var(--z-copy);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(1rem, 2vw, 1.6rem);
+  min-width: 0;
+  pointer-events: none;
+}
+
+.hero__copy > * {
+  pointer-events: auto;
+}
+
+.hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.hero__title {
+  font-size: var(--step-h1);
+  font-variation-settings: 'wght' 600;
+  max-width: 14ch;
+}
+
+.hero__lead {
+  max-width: 46ch;
+}
+
+.hero__actions {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.25rem, 3vw, 2.25rem);
+  flex-wrap: wrap;
+  margin-top: clamp(0.4rem, 1.4vw, 1rem);
+}
+
+.hero__scope {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem clamp(1.2rem, 2.5vw, 2rem);
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--line);
+}
+
+/* --- photography --- */
+
+.hero__stage {
+  margin-top: clamp(2rem, 5vw, 4rem);
+}
+
+.hero__stage-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 0.8rem;
+  margin-bottom: clamp(0.9rem, 2vw, 1.4rem);
+  border-bottom: 1px solid var(--line);
+}
+
+.hero__stage-title {
+  max-width: 13ch;
+  margin-top: 0.75rem;
+  font-size: clamp(1.65rem, 1.15rem + 2vw, 3.25rem);
+}
+
+.hero__stage-note {
+  color: var(--muted);
+  max-width: 34ch;
+  text-align: right;
+}
+
+@media (min-width: 861px) {
+  .hero__inner { grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr); column-gap: clamp(1.5rem, 3vw, 3rem); }
+  .hero__copy {
+    max-width: 100%;
+  }
+
+  .hero__title {
+    max-width: 12ch;
+    font-size: clamp(3rem, 5.5vw, 5.7rem);
+  }
+}
+
+@media (max-width: 860px) {
+  .hero__inner {
+    min-height: auto;
+    gap: clamp(1.5rem, 6vw, 2.5rem);
+  }
+
+  .hero__stage-note {
+    text-align: left;
+  }
+
+  .hero__stage-head { align-items: start; flex-direction: column; }
+}
+
+/* ==================================================================
+   X-ray — the wall goes transparent under the pointer
+   ================================================================== */
+
+.xray {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--ink) 5%, var(--page));
+  aspect-ratio: 1672 / 941;
+}
+
+.xray__base,
+.xray__hidden {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+  transform: none;
+  pointer-events: none;
+}
+
+/* Same source framing and stage bounds; the image never follows the pointer. */
+.xray__hidden {
+  opacity: 0;
+  mask-image: radial-gradient(circle at var(--lens-x, 50%) var(--lens-y, 50%),
+    #000 calc(var(--lens-radius) - 12px), transparent var(--lens-radius));
+  transition: opacity 180ms var(--ease);
+}
+.xray { --lens-radius: clamp(80px, 12.5vw, 180px); }
+.xray[data-active='true'] .xray__hidden,
+.xray[data-pinned='true'] .xray__hidden { opacity: 1; }
+.xray[data-pinned='true'] .xray__hidden { mask-image: none; }
+.xray__surface { position: absolute; inset: 0; touch-action: pan-y pinch-zoom; }
+
+.xray__control {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(24px, 2.2vw, 36px);
+  transform: translateX(-50%);
+  max-width: calc(100% - 32px);
+  z-index: 3;
+  margin: 0;
+}
+
+/* --- the control itself --- */
+
+.reveal-control {
+  display: inline-flex;
+  align-items: stretch;
+  height: 46px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(10px) saturate(1.1);
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 1px solid var(--line-soft);
+  transition: background-color 380ms var(--ease), opacity 380ms var(--ease);
+}
+
+.reveal-control[data-quiet='true'] {
+  opacity: 0.35;
+}
+
+.reveal-control__dot {
+  align-self: center;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cold);
+  margin-inline: clamp(0.85rem, 1.4vw, 1.1rem) 0;
+  flex: none;
+  transition: transform 380ms var(--ease);
+}
+
+.reveal-control__label {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-inline: 0.75rem clamp(0.9rem, 1.6vw, 1.3rem);
+  font-size: var(--step-label);
+  font-weight: 500;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.reveal-control__label::after {
+  content: '';
+  position: absolute;
+  left: 0.75rem;
+  bottom: 13px;
+  width: calc(100% - 1.5rem);
+  height: 1px;
+  background: var(--cold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 420ms var(--ease);
+}
+
+.reveal-control__arrow {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  border-left: 1px solid var(--line-soft);
+  color: var(--muted);
+}
+
+.reveal-control__arrow svg {
+  transition: transform 380ms var(--ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .reveal-control:hover {
+    background: rgba(255, 255, 255, 0.82);
+    opacity: 1;
+  }
+  .reveal-control:hover .reveal-control__dot {
+    transform: scale(1.7);
+  }
+  .reveal-control:hover .reveal-control__label::after {
+    transform: scaleX(1);
+  }
+  .reveal-control:hover .reveal-control__arrow {
+    color: var(--ink);
+  }
+  .reveal-control:hover .reveal-control__arrow svg {
+    transform: translateX(4px);
+  }
+  /* the lens is the interaction on a fine pointer; hide the system cursor */
+  .xray__surface {
+    cursor: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xray__hidden, .reveal-control, .assembly__hint { transition: none; }
+}
+
+/* One transparent canvas; all text and controls remain in the DOM. */
+.assembly { min-width: 0; position: relative; align-self: center; }
+.assembly__stage { position: relative; height: clamp(400px, 61svh, 680px); }
+.assembly__stage canvas { display: block; background: transparent; }
+.assembly[data-focused='true'] .assembly__stage canvas { clip-path: inset(40px 0); }
+.assembly__routes { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.13; pointer-events: none; }
+.assembly__index { position: absolute; top: 16px; left: 0; z-index: 1; font-size: 10px; }
+.assembly__surface { position: absolute; inset: 40px 0; touch-action: none; cursor: grab; user-select: none; }
+.assembly__surface[data-selectable='true'] { cursor: pointer; }
+.assembly__surface[data-dragging='true'] { cursor: grabbing; }
+.assembly__surface:focus-visible { outline: 1px solid var(--line); outline-offset: 3px; }
+.assembly__hint { position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; font-size: 10px; pointer-events: none; transition: opacity 200ms var(--ease-out); }
+.assembly__hint[data-hidden='true'] { opacity: 0; }
+.assembly__loading, .assembly__fallback { position: absolute; inset: 40% 10% auto; text-align: center; color: var(--muted); }
+.assembly__controls { position: relative; display: flex; align-items: center; justify-content: space-between; border-block: 1px solid var(--line); }
+.assembly__active-line { position: absolute; bottom: -1px; left: 0; height: 1px; width: 0; background: var(--cold); pointer-events: none; }
+.assembly__controls button { display: flex; align-items: center; gap: 0.6rem; min-height: 56px; padding-inline: 0.5rem; font-size: var(--step-label); letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); transition: color 180ms var(--ease-out), opacity 120ms; }
+.assembly__controls button:first-child { padding-left: 0; }
+.assembly__controls button:last-child { padding-right: 0; }
+.assembly__controls button span { font-size: 10px; color: var(--muted); }
+.assembly__controls button i { font-style: normal; margin-left: 0.4rem; transition: transform 180ms var(--ease-out); }
+.assembly__controls button[aria-pressed='true'] { color: var(--ink); }
+.assembly__controls button:disabled { color: var(--muted); opacity: 0.5; cursor: default; }
+.assembly__focus-route { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; }
+.assembly__focus-route path { stroke-width: 1px; stroke-dasharray: 1; stroke-dashoffset: 1; opacity: 0; }
+.assembly:not([data-focused='true']) .assembly__focus-route { opacity: 0; transition: opacity 200ms; }
+.assembly__info { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1.5rem; min-height: 190px; padding-block: 1.4rem 0.5rem; }
+.assembly__details { min-width: 0; }
+.assembly__part-index { display: flex; align-items: center; gap: 1.3rem; color: var(--muted); font-size: 10px; font-variant-numeric: tabular-nums; }
+.assembly__part-index span:first-child { color: var(--ink); }
+.assembly__info h2 { margin: 0.7rem 0 0.55rem; max-width: 14ch; font-size: clamp(1.8rem, 2.7vw, 2.8rem); letter-spacing: -0.045em; line-height: 0.98; font-weight: 500; text-transform: uppercase; text-wrap: balance; }
+.assembly__info p:not(.label) { margin: 0.6rem 0 0; color: var(--body); font-size: 0.9rem; max-width: 36ch; }
+.assembly__part-nav { display: flex; flex-direction: column; align-items: end; gap: 0.6rem; }
+.assembly__part-rail { display: flex; align-items: center; gap: 0.25rem; border-bottom: 1px solid var(--line); }
+.assembly__part-rail > span { font-size: 10px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.assembly__part-nav button { min-width: 44px; height: 44px; color: var(--ink); }
+.assembly__part-rail button span { display: inline-block; transition: transform 180ms var(--ease-out); }
+.assembly__part-nav .assembly__close { display: flex; align-items: center; gap: 1rem; width: auto; min-width: 88px; justify-content: end; color: var(--muted); text-transform: uppercase; font-size: 10px; letter-spacing: 0.09em; }
+.assembly__close span { font-size: 18px; }
+.assembly__part-nav button:active, .assembly__controls button:active { opacity: 0.55; }
+.assembly__part-nav button:focus-visible, .assembly__controls button:focus-visible { outline: 2px solid var(--cold); outline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) {
+  .assembly__controls button:enabled:hover { color: var(--cold-ink); }
+  .assembly__controls button:enabled:hover i { transform: translateX(3px); }
+  .assembly__part-nav button:hover { color: var(--ink); }
+  .assembly__part-rail button:first-child:hover span { transform: translateX(-3px); }
+  .assembly__part-rail button:last-child:hover span { transform: translateX(3px); }
+}
+@media (max-width: 860px) {
+  .assembly { width: 100%; }
+  .assembly__stage { height: clamp(330px, 90vw, 480px); }
+  .assembly__controls button { font-size: 10px; gap: 0.35rem; letter-spacing: 0.06em; }
+  .assembly__controls button span { font-size: 9px; }
+  .assembly__info { min-height: 220px; gap: 1rem; grid-template-columns: minmax(0, 1fr); }
+  .assembly__info h2 { font-size: clamp(1.8rem, 6vw, 2.4rem); max-width: 16ch; }
+  .assembly__part-nav { flex-direction: row; justify-content: space-between; align-items: center; }
+  .assembly__info p:not(.label) { font-size: 0.85rem; }
+  .assembly__part-nav button { width: 44px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .assembly__part-rail button span, .assembly__controls button, .assembly__hint { transition: none; }
+}
