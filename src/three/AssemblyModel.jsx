@@ -118,7 +118,10 @@ export function AssemblyModel({ state, api, route, onReady, reducedMotion, tier 
       }
       rig.warm = THREE.MathUtils.damp(rig.warm, s.inspection ? 1 : 0, 8, dt)
       rig.target.set(0, 0, 0)
-      rig.position.set(0, 0, distance * (1 + 0.08 * s.explodeProgress) * (1 - rig.warm * 0.035))
+      // A 25% closer apparent framing in the assembled hero only. Opening the
+      // assembly restores its full breathing room; part focus stays bounds-based.
+      const heroFraming = THREE.MathUtils.lerp(1 / 1.25, 1, s.explodeProgress)
+      rig.position.set(0, 0, distance * heroFraming * (1 + 0.08 * s.explodeProgress) * (1 - rig.warm * 0.035))
     }
 
     if (!s.fitted) {

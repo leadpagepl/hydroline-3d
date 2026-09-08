@@ -46,6 +46,8 @@
   max-width: 46ch;
 }
 
+.hero__since { display: block; margin-top: 0.7rem; }
+
 .hero__actions {
   display: flex;
   align-items: center;
@@ -160,7 +162,10 @@
   max-width: calc(100% - 32px);
   z-index: 3;
   margin: 0;
+  text-align: center;
 }
+
+.reveal-control__helper { display: block; margin-top: 0.55rem; color: var(--muted); font-size: 0.7rem; line-height: 1.35; }
 
 /* --- the control itself --- */
 

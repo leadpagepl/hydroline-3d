@@ -45,6 +45,12 @@ export function prepareAssembly(gltf) {
   })
   scene.traverse(object => {
     if (!object.isMesh) return
+    // The GLB exports the head's logo and scale as two separate black meshes.
+    // Hide only that printed geometry; retain the authored chrome and textures.
+    if (object.material.name === 'logo_oraz_skala') {
+      object.visible = false
+      object.raycast = () => {}
+    }
     object.frustumCulled = false
     // Per-mesh copies retain textures/metal/roughness while allowing local emphasis.
     object.material = object.material.clone()

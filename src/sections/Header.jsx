@@ -5,7 +5,7 @@ import { TextAction } from '../components/Action'
 const NAV = [
   { label: 'Usługi', href: '#uslugi' },
   { label: 'Realizacje', href: '#realizacje' },
-  { label: 'O nas', href: '#o-nas' },
+  { label: 'O firmie', href: '#o-nas' },
   { label: 'Kontakt', href: '#kontakt' },
 ]
 
@@ -35,8 +35,10 @@ export function Header() {
     <header className="header" data-lifted={lifted}>
       <div className="header__inner">
         <a className="wordmark" href="#top" aria-label={site.name}>
-          <span className="wordmark__a">{site.wordmark[0]}</span>
-          <span className="wordmark__b">{site.wordmark[1]}</span>
+          <span className="wordmark__stack">
+            <span className="wordmark__name"><span className="wordmark__a">{site.wordmark[0]}</span> <span className="wordmark__b">{site.wordmark[1]}</span></span>
+            <span className="wordmark__descriptor">{site.descriptor}</span>
+          </span>
           <span className="wordmark__dot" aria-hidden="true" />
         </a>
 
@@ -50,7 +52,7 @@ export function Header() {
 
         <div className="header__end">
           <TextAction href={ctaHref()} className="header__cta">
-            Zapytaj o wycenę
+            Zadzwoń
           </TextAction>
           <button
             className="header__burger"
@@ -78,7 +80,7 @@ export function Header() {
           ))}
         </nav>
         <TextAction href={ctaHref()} onClick={() => setOpen(false)}>
-          Zapytaj o wycenę
+          Zadzwoń
         </TextAction>
       </div>
     </header>

@@ -6,8 +6,8 @@ const SERVICES = [
   {
     id: 'instalacje',
     index: '01',
-    name: 'Instalacje wodne i kanalizacyjne',
-    line: 'Montujemy rury, odpływy i przyłącza w domu lub mieszkaniu.',
+    name: 'Instalacje wodne',
+    line: 'Montaż nowych instalacji wodnych.',
     image: '/assets/planning-installation.png',
     alt: 'Rysunek instalacji łazienki, złączki i narzędzia pomiarowe na stole',
     width: 1448,
@@ -19,7 +19,7 @@ const SERVICES = [
     id: 'ogrzewanie',
     index: '02',
     name: 'Ogrzewanie',
-    line: 'Montujemy i naprawiamy instalacje grzewcze.',
+    line: 'Montaż i naprawa instalacji grzewczych.',
     image: '/assets/plumber-at-work.png',
     alt: 'Monter składający instalację przy stelażu podtynkowym',
     width: 1536,
@@ -28,10 +28,10 @@ const SERVICES = [
     tone: 'hot',
   },
   {
-    id: 'kotlownie',
+    id: 'kanalizacja',
     index: '03',
-    name: 'Kotłownie',
-    line: 'Podłączamy kotły, zbiorniki, pompy i potrzebne instalacje.',
+    name: 'Kanalizacja',
+    line: 'Naprawa i wymiana instalacji kanalizacyjnych.',
     image: '/assets/project-boiler-room-after.png',
     alt: 'Kotłownia po modernizacji: kocioł, zasobnik i rozdzielacz obiegów',
     width: 1536,
@@ -40,29 +40,19 @@ const SERVICES = [
     tone: 'cold',
   },
   {
-    id: 'podlogowka', index: '04', name: 'Ogrzewanie podłogowe',
-    line: 'Układamy i podłączamy instalację ogrzewania podłogowego.',
-    image: '/assets/detail-manifold-system.png', alt: 'Rozdzielacz ogrzewania podłogowego', width: 1536, height: 1024, position: '50% 50%', tone: 'hot',
+    id: 'armatura', index: '04', name: 'Montaż armatury',
+    line: 'Montaż baterii, umywalek, WC i innych urządzeń.',
+    image: '/assets/detail-manifold-system.png', alt: 'Rozdzielacz instalacji', width: 1536, height: 1024, position: '50% 50%', tone: 'hot',
   },
   {
-    id: 'armatura', index: '05', name: 'Armatura i sanitariaty',
-    line: 'Montujemy baterie, umywalki, toalety, prysznice i inne urządzenia.',
+    id: 'naprawy', index: '05', name: 'Naprawy',
+    line: 'Naprawa przecieków i usterek.',
     image: '/assets/hero-plumbing-finished.png', alt: 'Gotowa łazienka z zamontowaną armaturą', width: 1672, height: 941, position: '60% 50%', tone: 'cold',
   },
   {
-    id: 'naprawy', index: '06', name: 'Naprawy',
-    line: 'Naprawiamy przecieki, zawory, odpływy i inne usterki.',
+    id: 'wymiana', index: '06', name: 'Wymiana instalacji',
+    line: 'Wymiana starych rur i instalacji.',
     image: '/assets/emergency-leak-service.png', alt: 'Sprawdzanie miejsca przecieku', width: 1536, height: 1024, position: '50% 50%', tone: 'hot',
-  },
-  {
-    id: 'diagnostyka', index: '07', name: 'Sprawdzenie usterki',
-    line: 'Sprawdzamy, gdzie jest problem i co trzeba naprawić.',
-    image: '/assets/plumber-at-work.png', alt: 'Instalator sprawdzający instalację', width: 1536, height: 1024, position: '55% 50%', tone: 'cold',
-  },
-  {
-    id: 'modernizacje', index: '08', name: 'Modernizacje',
-    line: 'Wymieniamy stare elementy instalacji i poprawiamy źle wykonane fragmenty.',
-    image: '/assets/project-boiler-room-after.png', alt: 'Kotłownia po wymianie instalacji', width: 1536, height: 1024, position: '50% 50%', tone: 'cold',
   },
 ]
 
@@ -95,15 +85,16 @@ export function Services() {
       <div className="shell services__inner">
         <div className="services__head">
           <p className="label label--indexed">
-            <span className="label__num">03</span> Usługi
+            <span className="label__num">03</span> Zakres
           </p>
           <Headline
             as="h2"
             size="l"
             id="services-title"
             className="services__title"
-            lines={['Co możemy', 'zrobić u Ciebie.']}
+            lines={['Usługi']}
           />
+          <p className="copy services__intro">Montaż, naprawa i wymiana instalacji.</p>
         </div>
 
         {/* one image stage for the whole list — rows, not cards */}

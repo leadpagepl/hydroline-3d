@@ -54,31 +54,31 @@ export function Hero() {
         <div className="hero__copy">
           <p className="label hero__eyebrow" data-intro="eyebrow">
             <span className="dot dot--cold" aria-hidden="true" />
-            Instalacje wodne / ogrzewanie / naprawy
+            Jacek Czuber <span aria-hidden="true">•</span> Zakład Hydrauliczny
           </p>
 
           <h1 className="display display--xl hero__title">
             <span className="line-mask">
-              <span>Robimy</span>
+              <span>Instalacje</span>
             </span>
             <span className="line-mask">
-              <span>i naprawiamy</span>
+              <span>hydrauliczne</span>
             </span>
             <span className="line-mask">
-              <span>instalacje.</span>
+              <span>w Łodzi</span>
             </span>
           </h1>
 
           <p className="lead hero__lead" data-intro="body">
-            Nowe instalacje, przeróbki i naprawy w domach i mieszkaniach. Najpierw sprawdzamy, co trzeba zrobić. Potem podajemy rozwiązanie i wycenę.
+            Montaż i naprawa instalacji wodnych i grzewczych.
           </p>
 
           <div className="hero__actions" data-intro="body">
-            <Action href={ctaHref()}>Zapytaj o wycenę</Action>
-            <TextAction href="#realizacje">Zobacz realizacje</TextAction>
+            <Action href={ctaHref()}>Zadzwoń</Action>
+            <TextAction href="#uslugi">Zobacz usługi</TextAction>
           </div>
           <div className="hero__scope label" data-intro="body" aria-label="Zakres usług">
-            <span>Instalacje</span><span>Ogrzewanie</span><span>Naprawy</span>
+            <span>Od 1997 roku</span><span>Łódź</span><span>Woda i ogrzewanie</span>
           </div>
         </div>
 
@@ -88,10 +88,10 @@ export function Hero() {
       <div className="shell hero__stage" data-intro="stage">
         <div className="hero__stage-head">
           <div>
-            <p className="label label--indexed"><span className="label__num">01</span> Pod ścianą</p>
-            <h2 className="display hero__stage-title">Zobacz, co jest pod ścianą.</h2>
+            <p className="label label--indexed"><span className="label__num">01</span> Instalacja</p>
+            <h2 className="display hero__stage-title">Instalacja podtynkowa</h2>
           </div>
-          <p className="copy hero__stage-note">Gotowa łazienka wygląda prosto. Pod ścianą jest cała instalacja.</p>
+          <p className="copy hero__stage-note">Rury w ścianach i podłogach.</p>
         </div>
 
         <XrayStage

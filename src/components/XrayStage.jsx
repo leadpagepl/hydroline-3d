@@ -47,9 +47,10 @@ export function XrayStage({ base, hidden, alt, hiddenAlt }) {
           aria-label={pinned ? 'Ukryj instalację' : 'Pokaż całą instalację'} aria-pressed={pinned}
           onClick={() => { setPinned((v) => !v); setUsed(true) }}>
           <span className="reveal-control__dot" aria-hidden="true" />
-          <span className="reveal-control__label">{pinned ? 'Ukryj instalację' : fine ? 'Przesuń kursorem' : 'Przeciągnij palcem'}</span>
+          <span className="reveal-control__label">{pinned ? 'Ukryj instalację' : 'Pokaż instalację'}</span>
           <span className="reveal-control__arrow" aria-hidden="true">→</span>
         </button>
+        <span className="reveal-control__helper">{fine ? 'Przesuń kursorem, żeby zobaczyć instalację.' : 'Przeciągnij palcem, żeby zobaczyć instalację.'}</span>
       </figcaption>
     </figure>
   )

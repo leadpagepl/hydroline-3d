@@ -5,8 +5,8 @@ import { Compare } from '../components/Compare'
 const PROJECTS = [
   {
     id: 'lazienka',
-    name: 'Instalacja pod umywalką',
-    scope: 'Wymieniliśmy stare połączenia i uporządkowaliśmy odpływ oraz doprowadzenie wody.',
+    name: 'Woda i kanalizacja',
+    scope: 'Instalacja wodna',
     before: '/assets/project-plumbing-before.png',
     after: '/assets/project-plumbing-after.png',
     beforeAlt: 'Instalacja pod umywalką przed wymianą',
@@ -14,8 +14,8 @@ const PROJECTS = [
   },
   {
     id: 'kotlownia',
-    name: 'Modernizacja kotłowni',
-    scope: 'Stara instalacja została uporządkowana i przebudowana.',
+    name: 'Ogrzewanie',
+    scope: 'Ogrzewanie',
     before: '/assets/project-boiler-room-before.png',
     after: '/assets/project-boiler-room-after.png',
     beforeAlt: 'Kotłownia przed modernizacją',
@@ -40,8 +40,9 @@ export function Projects() {
               size="l"
               id="projects-title"
               className="projects__title"
-              lines={['Zobacz, jak', 'wygląda nasza praca.']}
+              lines={['Realizacje']}
             />
+            <p className="copy projects__intro">Instalacje i naprawy.</p>
           </div>
 
           <div className="projects__switch">

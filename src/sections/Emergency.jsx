@@ -15,25 +15,26 @@ export function Emergency() {
         <div className="emergency__copy">
           <p className="label label--indexed emergency__label">
             <span className="dot dot--hot" aria-hidden="true" />
-            Naprawa
+            Ogrzewanie
           </p>
           <Headline
             as="h2"
             size="l"
             id="emergency-title"
             className="emergency__title"
-            lines={['Cieknie woda', 'albo coś', 'nie działa?']}
+            lines={['Ogrzewanie']}
           />
           <Rise className="emergency__support">
             <p className="copy">
-              Napisz lub zadzwoń. Najpierw sprawdzimy przyczynę problemu. Potem powiemy, co trzeba naprawić.
+              Montaż i naprawa instalacji grzewczych.
             </p>
             <div className="emergency__actions">
               <Action href={ctaHref()} tone="hot">
-                Zgłoś awarię
+                Zadzwoń
               </Action>
               {callHref && <TextAction href={callHref}>Zadzwoń</TextAction>}
             </div>
+            <p className="label emergency__scope">Centralne ogrzewanie · Ciepła woda</p>
           </Rise>
         </div>
 

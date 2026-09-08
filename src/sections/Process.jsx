@@ -1,12 +1,12 @@
 import { Headline, Rise } from '../components/Reveal'
+import { Action } from '../components/Action'
+import { ctaHref } from '../data/site'
 
 const STEPS = [
-  ['01', 'Kontakt', 'Opisujesz, czego potrzebujesz.'],
-  ['02', 'Sprawdzenie', 'Oglądamy instalację albo zdjęcia.'],
-  ['03', 'Plan', 'Mówimy, co trzeba zrobić.'],
-  ['04', 'Wycena', 'Dostajesz koszt i zakres prac.'],
-  ['05', 'Praca', 'Wykonujemy ustalone prace.'],
-  ['06', 'Sprawdzenie', 'Na końcu sprawdzamy, czy wszystko działa.'],
+  ['01', 'Kontakt', 'Powiedz, czego potrzebujesz.'],
+  ['02', 'Wycena', 'Ustalam zakres i koszt pracy.'],
+  ['03', 'Praca', 'Wykonuję instalację lub naprawę.'],
+  ['04', 'Odbiór', 'Sprawdzamy gotową pracę.'],
 ]
 
 export function Process() {
@@ -14,10 +14,11 @@ export function Process() {
     <section className="section process" aria-labelledby="process-title">
       <div className="shell process__inner">
         <div className="process__head">
-          <p className="label">Jak pracujemy</p>
-          <Headline as="h2" size="l" id="process-title" className="process__title" lines={['Jak wygląda', 'zlecenie.']} />
+          <p className="label">Współpraca</p>
+          <Headline as="h2" size="l" id="process-title" className="process__title" lines={['Jak pracuję']} />
           <Rise className="process__support">
-            <p className="copy">Zabezpieczamy miejsce pracy. Po zakończeniu sprawdzamy instalację i sprzątamy.</p>
+            <p className="copy">Kontakt, wycena, praca i odbiór.</p>
+            <Action href={ctaHref()}>Zadzwoń</Action>
           </Rise>
         </div>
         <ol className="process__list">

@@ -9,14 +9,14 @@ export function Approach() {
       <div className="shell">
         <div className="approach__head">
           <p className="label label--indexed">
-            <span className="label__num">02</span> Plan
+            <span className="label__num">02</span> Detale
           </p>
           <Headline
             as="h2"
             size="l"
             id="approach-title"
             className="approach__title"
-            lines={['Dobra instalacja', 'zaczyna się', 'od dobrego planu.']}
+            lines={['Instalacja']}
           />
         </div>
 
@@ -32,16 +32,16 @@ export function Approach() {
             />
             <figcaption className="approach__caption">
               <span className="dot dot--hot" aria-hidden="true" />
-              <span className="label">Połączenia</span>
+              <span className="label">Armatura</span>
             </figcaption>
           </figure>
 
           <Rise className="approach__note">
             <p className="copy">
-              Sprawdzamy przebieg rur, połączenia i miejsce montażu. Dzięki temu przed pracą wiadomo, co trzeba zrobić.
+              Montaż rur i połączeń.
             </p>
             <p className="copy approach__note-strong">
-              Każde połączenie sprawdzamy przed zamknięciem ściany lub podłogi.
+              Sprawdzenie instalacji przed zamknięciem ściany lub podłogi.
             </p>
           </Rise>
 
@@ -56,7 +56,7 @@ export function Approach() {
             />
             <figcaption className="approach__caption">
               <span className="dot dot--cold" aria-hidden="true" />
-              <span className="label">Rozdzielacz</span>
+              <span className="label">Rozdział instalacji</span>
             </figcaption>
           </figure>
         </div>

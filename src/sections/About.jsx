@@ -17,20 +17,18 @@ export function About() {
 
         <div className="about__text">
           <p className="label label--indexed">
-            <span className="label__num">05</span> O nas
+            <span className="label__num">05</span> Firma
           </p>
           <Headline
             as="h2"
             size="l"
             id="about-title"
             className="about__title"
-            lines={['Rozmawiasz', 'z osobą,', 'która robi', 'tę pracę.']}
+            lines={['Doświadczenie']}
           />
           <Rise className="about__support" delay={0.06}>
-            <p className="lead">Od początku wiesz, kto zajmuje się Twoją instalacją.</p>
-            <p className="copy">
-              Możesz zapytać, co trzeba zrobić, ile to potrwa i jaki będzie koszt.
-            </p>
+            <p className="lead">Od lat zajmuję się instalacjami hydraulicznymi w Łodzi.</p>
+            <p className="copy">Montaż, naprawa i wymiana instalacji.</p>
           </Rise>
         </div>
       </div>

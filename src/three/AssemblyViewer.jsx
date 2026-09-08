@@ -163,7 +163,7 @@ export function AssemblyViewer({ tier, reducedMotion }) {
       <svg className="assembly__focus-route" aria-hidden="true"><path ref={route} pathLength="1" fill="none" stroke="var(--cold)" /></svg>
       <div className="assembly__surface" ref={surface} tabIndex={ready ? 0 : -1} role="group" aria-label="Model zaworu. Przeciągnij lub użyj strzałek, żeby obrócić. Escape odznacza część. Home przywraca obrót."
         data-dragging={dragging} data-selectable={!!hovered} onPointerDown={start} onPointerMove={move} onPointerUp={stop} onPointerCancel={stop} onLostPointerCapture={stop} onKeyDown={key} onPointerLeave={() => { state.current.hovered = null; setHovered(null) }} />
-      <p className="label assembly__hint" data-hidden={!ready || (expanded ? partUsed : dragUsed)}>{expanded ? 'Wybierz część, żeby ją zobaczyć' : 'Przeciągnij, żeby obrócić'}</p>
+      <p className="label assembly__hint" data-hidden={!ready || (expanded ? partUsed : dragUsed)}>{expanded ? 'Wybierz część' : 'Przeciągnij, żeby obrócić'}</p>
     </div>
     <div className="assembly__controls" ref={rail} aria-label="Sterowanie modelem">
       <span className="assembly__active-line" ref={activeLine} aria-hidden="true" />
@@ -173,7 +173,7 @@ export function AssemblyViewer({ tier, reducedMotion }) {
     </div>
     <div className="assembly__info">
       <div className="assembly__details" ref={details} aria-live="polite" aria-atomic="true">
-        {part ? <><p className="label assembly__part-index"><span>{index} / {count}</span><span>Część</span></p><h2>{part.label}</h2><p>{part.description}</p></> : <p className="assembly__info-note">{expanded ? 'Wybierz część na modelu lub przejdź do „Części”.' : 'Zobacz, z czego składa się zawór grzejnika.'}</p>}
+        {part ? <><p className="label assembly__part-index"><span>{index} / {count}</span><span>Część</span></p><h2>{part.label}</h2><p>{part.description}</p></> : <p className="assembly__info-note">{expanded ? 'Wybierz część.' : 'Zawór grzejnika.'}</p>}
       </div>
       {selected && <div className="assembly__part-nav" aria-label="Przeglądanie części"><div className="assembly__part-rail"><button type="button" aria-label="Poprzednia część" onClick={() => next(-1)}><span>←</span></button><span className="label">{String(PARTS.findIndex(p => p.id === selected) + 1).padStart(2,'0')} / {count}</span><button type="button" aria-label="Następna część" onClick={() => next(1)}><span>→</span></button></div><button className="assembly__close" type="button" aria-label="Zamknij podgląd części" onClick={closeFocus}>Zamknij <span aria-hidden="true">×</span></button></div>}
     </div>

@@ -1,15 +1,15 @@
 import { useRef, useState } from 'react'
 import { Headline } from '../components/Reveal'
+import { TextAction } from '../components/Action'
 import { site } from '../data/site'
 
-const SERVICES = ['Nowa instalacja', 'Naprawa', 'Ogrzewanie', 'Kotłownia', 'Łazienka / armatura', 'Modernizacja', 'Inne']
+const SERVICES = ['Instalacja wodna', 'Kanalizacja', 'Ogrzewanie', 'Instalacja gazowa', 'Modernizacja', 'Naprawa', 'Inne']
 
 export function Contact() {
   const [files, setFiles] = useState([])
   const [errors, setErrors] = useState({})
   const [demoReady, setDemoReady] = useState(false)
   const formRef = useRef(null)
-  const phone = site.contact.phone
 
   function validate(form) {
     const data = new FormData(form)
@@ -52,11 +52,12 @@ export function Contact() {
       <div className="shell contact__inner">
         <div className="contact__copy">
           <p className="label label--indexed"><span className="label__num">06</span> Kontakt</p>
-          <Headline as="h2" size="l" id="contact-title" className="contact__title" lines={['Napisz,', 'co trzeba', 'zrobić.']} />
-          <p className="lead contact__lead">Opisz problem albo planowane prace. Jeśli masz zdjęcia, możesz je dodać. Odpowiemy, czego potrzebujemy do wyceny.</p>
+          <Headline as="h2" size="l" id="contact-title" className="contact__title" lines={['Kontakt']} />
+          <p className="lead contact__lead">Masz problem z instalacją?<br />Zadzwoń.</p>
           <div className="contact__phone">
-            <span className="label">Wolisz zadzwonić?</span>
-            {phone ? <a href={`tel:${phone.replace(/[^+\d]/g, '')}`}>{phone}</a> : <span aria-label="Numer telefonu do uzupełnienia">+48 XXX XXX XXX</span>}
+            <span className="label">Zadzwoń</span>
+            <address>{site.contact.phone}<br /><br />{site.address[0]}<br />{site.address[1]}</address>
+            <TextAction href="https://www.google.com/maps/search/?api=1&query=Stefana%20Jaracza%2076%2C%2090-251%20%C5%81%C3%B3d%C5%BA" target="_blank" rel="noopener noreferrer">Pokaż na mapie</TextAction>
           </div>
         </div>
 
@@ -82,12 +83,12 @@ export function Contact() {
 
           <label className="form-field form-field--textarea" htmlFor="message">
             <span>Wiadomość <i aria-hidden="true">*</i></span>
-            <textarea id="message" name="message" placeholder="Napisz krótko, czego potrzebujesz. Na przykład: Cieknie zawór pod zlewem." aria-invalid={Boolean(errors.message)} aria-describedby={errors.message ? 'message-error' : undefined} onChange={() => clearError('message')} />
+            <textarea id="message" name="message" placeholder="Napisz, czego potrzebujesz." aria-invalid={Boolean(errors.message)} aria-describedby={errors.message ? 'message-error' : undefined} onChange={() => clearError('message')} />
             {errors.message && <small id="message-error" role="alert">{errors.message}</small>}
           </label>
 
           <div className="contact-form__upload">
-            <div><span className="contact-form__upload-title">Dodaj zdjęcia</span><p>Jeśli możesz, dodaj zdjęcia instalacji albo miejsca naprawy.</p></div>
+            <div><span className="contact-form__upload-title">Dodaj zdjęcia</span><p>Dodaj zdjęcia instalacji.</p></div>
             <label className="upload-control">
               <input type="file" name="photos" accept="image/jpeg,image/png,image/webp" multiple onChange={(e) => { setFiles(Array.from(e.target.files || [])); setDemoReady(false) }} />
               <span>Wybierz zdjęcia</span>
@@ -96,14 +97,14 @@ export function Contact() {
           </div>
 
           <button className="action contact-form__submit" type="submit">
-            <span className="action__body">Wyślij zapytanie</span>
+            <span className="action__body">Wyślij</span>
             <span className="action__arrow" aria-hidden="true">→</span>
           </button>
-          <p className="contact-form__note">Odpowiemy, gdy zapoznamy się z wiadomością.</p>
+          <p className="contact-form__note">Odpowiem po przeczytaniu wiadomości.</p>
 
           <div className="contact-form__status" data-visible={demoReady} aria-live="polite">
-            <strong>Formularz działa w trybie demo.</strong>
-            <p>Dane zostały sprawdzone, ale nic nie zostało wysłane. Po podłączeniu formularza wiadomość będzie można wysłać stąd.</p>
+            <strong>Formularz testowy.</strong>
+            <p>Wiadomość nie została wysłana.</p>
           </div>
         </form>
       </div>

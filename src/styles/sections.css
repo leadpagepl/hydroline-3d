@@ -260,6 +260,7 @@
 .process__inner { display: grid; gap: clamp(2.5rem, 6vw, 5rem); }
 .process__title { margin-top: 1rem; font-size: var(--step-h2); }
 .process__support { margin-top: 1.5rem; }
+.process__support .action { margin-top: 1.5rem; }
 .process__list { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
 .process__step {
   display: grid;
@@ -556,6 +557,8 @@
     aspect-ratio: 3 / 4;
   }
 }
+.about__proof { display: flex; align-items: baseline; gap: 1rem; margin-top: 0.6rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.about__proof strong { font-size: clamp(2.25rem, 4vw, 4rem); font-weight: 500; letter-spacing: -0.05em; }
 
 /* ==================================================================
    VI — Contact form
@@ -568,6 +571,10 @@
 .contact__lead { margin-top: clamp(1.5rem, 3vw, 2.25rem); }
 .contact__phone { display: grid; gap: 0.45rem; margin-top: clamp(2rem, 4vw, 3.5rem); padding-top: 1rem; border-top: 1px solid var(--line); }
 .contact__phone > a, .contact__phone > span:not(.label) { font-size: var(--step-lead); color: var(--ink); }
+.contact__phone address { color: var(--ink); font-size: var(--step-lead); font-style: normal; line-height: 1.45; }
+.contact__phone .text-action { justify-self: start; margin-top: 0.35rem; font-size: var(--step-label); }
+.services__intro, .projects__intro { max-width: 42ch; margin-top: 1.25rem; }
+.emergency__scope { margin-top: 1.5rem; color: color-mix(in srgb, #fff 62%, transparent); line-height: 1.7; }
 
 .contact-form { display: grid; gap: 1.6rem; align-content: start; }
 .contact-form__row { display: grid; gap: 1.6rem; }
