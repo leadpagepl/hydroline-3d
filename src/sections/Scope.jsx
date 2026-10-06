@@ -20,10 +20,10 @@ const lengthToPx = (value) => {
 }
 
 /**
- * 02 — the scope, with the valve as its technical detail. Left: the trust
- * strip, then the scope list held in place while scrolling makes 01…06
- * active in turn. Right: the one valve on the page, sticky for the stretch
- * and gone before the services begin.
+ * 02 — the scope, with the valve as its technical detail. Left: the scope
+ * list held in place while scrolling makes 01…06 active in turn. Right: the
+ * one valve on the page, sticky for the stretch and gone before the services
+ * begin.
  *
  * A single scroll mapping writes one story state (t, active, exit). The copy,
  * the model and the drafting routes all read that state — nothing has a
@@ -121,14 +121,10 @@ export function Scope() {
       <div className="shell story__grid">
         <div className="story__visual">
           <div className="story__sticky">
-            {/* desktop: the stage spans the scene, the valve sits right of centre */}
-            <AssemblyViewer tier={isMobile ? 'mobile' : 'desktop'} offsetX={isMobile ? 0 : 0.46} reducedMotion={reduced} story={story} paused={gone} />
+            {/* desktop: the stage spans the scene, the valve sits well right of
+                centre, behind the copy's right-hand space */}
+            <AssemblyViewer tier={isMobile ? 'mobile' : 'desktop'} offsetX={isMobile ? 0 : 0.52} reducedMotion={reduced} story={story} paused={gone} />
           </div>
-        </div>
-
-        <div className="story__trust trust">
-          <p className="trust__title">Blisko 30 lat doświadczenia</p>
-          <p className="trust__text">Od 1997 roku realizujemy instalacje sanitarne.</p>
         </div>
 
         <div className="scope">
@@ -158,7 +154,7 @@ export function Scope() {
                         {item.tags && (
                           <span className="scope__tags">
                             {item.tags.map(([tone, label]) => (
-                              <span className="scope__tag" key={label}><span className={`dot dot--${tone}`} aria-hidden="true" />{label}</span>
+                              <span className={`scope__tag scope__tag--${tone}`} key={label}><span className={`dot dot--${tone}`} aria-hidden="true" />{label}</span>
                             ))}
                           </span>
                         )}

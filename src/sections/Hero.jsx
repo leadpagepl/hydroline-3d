@@ -61,8 +61,15 @@ export function Hero() {
             <Action href={ctaHref('call')}>Zadzwoń</Action>
             <TextAction href="#uslugi">Zobacz usługi</TextAction>
           </div>
+
+          {/* trust proof: part of the first screen, under the actions; it
+              carries "since 1997", so the facts row below doesn't repeat it */}
+          <div className="hero__trust trust" data-intro="body">
+            <p className="trust__title">Blisko 30 lat doświadczenia</p>
+            <p className="trust__text">Od 1997 roku realizujemy instalacje sanitarne.</p>
+          </div>
           <div className="hero__scope label" data-intro="body">
-            <span>Od 1997 roku</span><span>Siedziba: Łódź</span><span>Realizacje także poza Łodzią</span>
+            <span>Siedziba: Łódź</span><span>Realizacje także poza Łodzią</span>
           </div>
         </div>
 
