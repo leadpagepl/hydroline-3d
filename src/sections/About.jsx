@@ -24,11 +24,14 @@ export function About() {
             size="l"
             id="about-title"
             className="about__title"
-            lines={['Doświadczenie']}
+            lines={['Doświadczenie', 'od 1997 roku']}
           />
           <Rise className="about__support" delay={0.06}>
-            <p className="lead">Od lat zajmuję się instalacjami hydraulicznymi w Łodzi.</p>
-            <p className="copy">Montaż, naprawa i wymiana instalacji.</p>
+            <p className="lead">
+              Nasza firma działa na rynku od 1997 roku. Od początku stawiamy na jakość wykonywanych usług
+              instalacyjnych.
+            </p>
+            <p className="copy">Siedzibę mamy w Łodzi. Instalacje realizujemy również poza Łodzią.</p>
           </Rise>
         </div>
       </div>

@@ -51,7 +51,7 @@ export function Header() {
         </nav>
 
         <div className="header__end">
-          <TextAction href={ctaHref()} className="header__cta">
+          <TextAction href={ctaHref('call')} className="header__cta">
             Zadzwoń
           </TextAction>
           <button
@@ -79,7 +79,7 @@ export function Header() {
             </a>
           ))}
         </nav>
-        <TextAction href={ctaHref()} onClick={() => setOpen(false)}>
+        <TextAction href={ctaHref('call')} onClick={() => setOpen(false)}>
           Zadzwoń
         </TextAction>
       </div>
