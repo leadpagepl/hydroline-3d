@@ -18,6 +18,7 @@ export const PARTS = [
 ]
 
 const prepared = new WeakMap()
+const extent = new THREE.Vector3()
 const smooth = (x) => x * x * (3 - 2 * x)
 
 export function prepareAssembly(gltf) {
@@ -29,7 +30,6 @@ export function prepareAssembly(gltf) {
     const association = gltf.parser.associations.get(object)
     if (association?.nodes !== undefined) byIndex.set(association.nodes, object)
   })
-  const materials = []
   const parts = PARTS.map(config => {
     const axis = new THREE.Vector3(...config.axis)
     const nodes = config.nodes.map(index => {
@@ -52,10 +52,6 @@ export function prepareAssembly(gltf) {
       object.raycast = () => {}
     }
     object.frustumCulled = false
-    // Per-mesh copies retain textures/metal/roughness while allowing local emphasis.
-    object.material = object.material.clone()
-    object.material.transparent = true
-    materials.push({ mesh: object, material: object.material, partId: object.userData.partId, color: object.material.color.clone(), emissive: object.material.emissive.clone(), intensity: object.material.envMapIntensity, opacity: object.material.opacity })
   })
   const bounds = () => {
     scene.updateMatrixWorld(true)
@@ -77,7 +73,7 @@ export function prepareAssembly(gltf) {
     part.center = part.bounds.getCenter(new THREE.Vector3())
   })
   const span = originalBounds.getSize(new THREE.Vector3()).length()
-  const data = { scene, parts, materials, span, pullDistance: span * 0.085 }
+  const data = { scene, parts, span, pullDistance: span * 0.085 }
   applyAssembly(data, 1)
   const explodedBounds = bounds().expandByScalar(data.pullDistance)
   applyAssembly(data, 0)
@@ -86,14 +82,18 @@ export function prepareAssembly(gltf) {
   return data
 }
 
-export function partWorldBounds(data, part, progress, pull, target) {
+/**
+ * World point on a part's outer face along its assembly axis, pushed `offset`
+ * further out. For a pipe adapter that is where the pipe actually attaches.
+ */
+export function partAnchor(data, part, progress, offset, target) {
   const t = smooth(THREE.MathUtils.clamp((progress - part.range[0]) / (part.range[1] - part.range[0]), 0, 1))
-  target.copy(part.bounds)
-  const distance = part.distance * t + pull * data.pullDistance
-  for (const key of ['min', 'max']) {
-    target[key].x += part.axis[0] * distance
-    target[key].y += part.axis[1] * distance
-    target[key].z += part.axis[2] * distance
+  part.bounds.getCenter(target)
+  part.bounds.getSize(extent)
+  const along = part.distance * t + part.pull * data.pullDistance + offset
+  for (let i = 0; i < 3; i++) {
+    if (!part.axis[i]) continue
+    target.setComponent(i, target.getComponent(i) + part.axis[i] * (extent.getComponent(i) / 2 + along))
   }
   return target.applyMatrix4(data.scene.parent.matrixWorld)
 }

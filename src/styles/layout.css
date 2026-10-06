@@ -1,8 +1,10 @@
 /* ==================================================================
-   Signal dot — the smallest unit of the technical palette
+   Signal dot — the smallest unit of the technical palette.
+   Neutral by default; --cold / --hot only where the circuit is meant.
    ================================================================== */
 
 .dot {
+  background: var(--accent);
   display: inline-block;
   width: 6px;
   height: 6px;
@@ -87,7 +89,7 @@
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: var(--cold);
+  background: var(--accent);
   margin-left: 0.35em;
   align-self: flex-end;
   margin-bottom: 0.18em;
@@ -123,7 +125,7 @@
   bottom: 0.3rem;
   width: 100%;
   height: 1px;
-  background: var(--cold);
+  background: var(--accent);
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 340ms var(--ease);
@@ -232,7 +234,7 @@
   font-size: var(--step-label);
   font-weight: 500;
   letter-spacing: var(--track-label);
-  color: var(--cold);
+  color: var(--accent);
   font-variant-numeric: tabular-nums;
 }
 
@@ -275,7 +277,7 @@
   position: relative;
 }
 
-/* the cold hairline that appears under the label on hover */
+/* the hairline that appears under the label on hover */
 .action__body::after {
   content: '';
   position: absolute;
@@ -283,7 +285,7 @@
   right: clamp(1.25rem, 2vw, 1.75rem);
   bottom: 15px;
   height: 1px;
-  background: var(--cold);
+  background: currentColor;
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 400ms var(--ease);
@@ -301,12 +303,15 @@
   transition: transform 380ms var(--ease);
 }
 
-.action--hot {
-  background: var(--hot);
+/* inverted for the dark chapter: white body, ink type */
+.action--inverse {
+  background: #fff;
+  color: var(--ink);
 }
 
-.action--hot .action__body::after {
-  background: #fff;
+.action--inverse .action__arrow {
+  border-left-color: var(--line);
+  background: transparent;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -365,11 +370,11 @@
 
 @media (hover: hover) and (pointer: fine) {
   .text-action:hover .text-action__label::after {
-    background: var(--cold);
+    background: var(--accent);
   }
   .text-action:hover .text-action__arrow {
     transform: translateX(4px);
-    color: var(--cold);
+    color: var(--accent);
   }
 }
 

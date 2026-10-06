@@ -1,11 +1,11 @@
-import { site } from '../data/site'
+import { site, phoneHref } from '../data/site'
 
 const YEAR = new Date().getFullYear()
 
 export function Footer() {
   const { phone, email, area, hours } = site.contact
   const details = [
-    phone && { label: 'Telefon', value: phone, href: `tel:${phone.replace(/[^+\d]/g, '')}` },
+    phone && { label: 'Telefon', value: phone, href: phoneHref() },
     email && { label: 'E-mail', value: email, href: `mailto:${email}` },
     area && { label: 'Obszar', value: area },
     hours && { label: 'Godziny', value: hours },
@@ -22,7 +22,7 @@ export function Footer() {
             </span>
             <span className="wordmark__dot" aria-hidden="true" />
           </span>
-          <p className="label footer__scope">Instalacje wodne · Kanalizacja · Ogrzewanie · Gaz</p>
+          <p className="label footer__scope">Instalacje wodociągowe, kanalizacja, ogrzewanie, gaz</p>
         </div>
 
         <nav className="footer__nav" aria-label="Stopka">
@@ -42,7 +42,7 @@ export function Footer() {
           ))}
         </dl>
         <div className="footer__legal">
-          <p className="label">© {YEAR} Jacek Czuber „Zakład Hydrauliczny”</p>
+          <p className="label">© {YEAR} Jacek Czuber · Firma instalacji sanitarnych</p>
           <p className="label">NIP {site.nip} · REGON {site.regon}</p>
           <p className="footer__credit">Strona wykonana przez <a href="https://leadpage.pl" target="_blank" rel="noopener noreferrer">leadpage.pl</a></p>
         </div>

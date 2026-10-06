@@ -1,105 +1,86 @@
 import { useLayoutEffect, useRef } from 'react'
-import { AssemblyViewer } from '../three/AssemblyViewer'
-import { XrayStage } from '../components/XrayStage'
 import { Action, TextAction } from '../components/Action'
 import { gsap } from '../lib/motion'
-import { useIsMobile, useMediaQuery, useReducedMotion } from '../lib/hooks'
+import { useReducedMotion } from '../lib/hooks'
 import { ctaHref } from '../data/site'
 
+/**
+ * Who the company is and what its work looks like: the copy on the left, the
+ * same bathroom at installation stage and after handover on the right. No
+ * slider, no interaction — two calm frames side by side.
+ */
 export function Hero() {
   const rootRef = useRef(null)
   const reduced = useReducedMotion()
-  const isMobile = useIsMobile()
-  const isTablet = useMediaQuery('(min-width: 861px) and (max-width: 1180px)')
 
-  const tier = isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop'
-
-  // --- opening choreography (the 3D half runs on the same clock)
   useLayoutEffect(() => {
     const root = rootRef.current
-    if (!root) return
     const ctx = gsap.context(() => {
       const lines = root.querySelectorAll('.hero__title .line-mask > span')
       const steps = root.querySelectorAll('[data-intro]')
-
-      if (reduced) {
-        gsap.set([lines, steps], { yPercent: 0, y: 0, opacity: 1 })
-        return
-      }
-
+      const frames = root.querySelectorAll('.hero__frame')
+      if (reduced) { gsap.set([lines, steps], { yPercent: 0, y: 0, opacity: 1 }); return }
       gsap.set(lines, { yPercent: 112 })
       gsap.set(steps, { y: 14, opacity: 0 })
-
-      gsap
-        .timeline({ delay: 0.1 })
+      gsap.timeline({ delay: 0.1 })
         .to(root.querySelector('[data-intro="eyebrow"]'), { y: 0, opacity: 1, duration: 0.6, ease: 'power3.out' })
         .to(lines, { yPercent: 0, duration: 1, ease: 'expo.out', stagger: 0.07 }, 0.1)
-        .to(
-          root.querySelectorAll('[data-intro="body"]'),
-          { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', stagger: 0.07 },
-          0.46
-        )
-        .to(
-          root.querySelectorAll('[data-intro="stage"]'),
-          { y: 0, opacity: 1, duration: 0.9, ease: 'power3.out' },
-          0.6
-        )
+        .to(root.querySelectorAll('[data-intro="body"]'), { y: 0, opacity: 1, duration: 0.7, ease: 'power3.out', stagger: 0.07 }, 0.46)
+        // the two frames are uncovered one after the other: work, then result
+        .fromTo(frames, { clipPath: 'inset(0% 0% 100% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', duration: 1.2, ease: 'expo.inOut', stagger: 0.18 }, 0.25)
     }, root)
     return () => ctx.revert()
   }, [reduced])
 
   return (
     <section id="hero" className="hero" ref={rootRef}>
-      <div className="shell hero__inner">
+      <div className="shell hero__grid">
         <div className="hero__copy">
           <p className="label hero__eyebrow" data-intro="eyebrow">
-            <span className="dot dot--cold" aria-hidden="true" />
-            Jacek Czuber <span aria-hidden="true">•</span> Zakład Hydrauliczny
+            <span className="dot" aria-hidden="true" />
+            <span>Jacek Czuber <span aria-hidden="true">•</span> Firma instalacji sanitarnych</span>
           </p>
 
           <h1 className="display display--xl hero__title">
             <span className="line-mask">
-              <span>Instalacje</span>
+              <span>Kompleksowe</span>
             </span>
             <span className="line-mask">
-              <span>hydrauliczne</span>
+              <span>instalacje</span>
             </span>
             <span className="line-mask">
-              <span>w Łodzi</span>
+              <span>sanitarne</span>
             </span>
           </h1>
 
           <p className="lead hero__lead" data-intro="body">
-            Montaż i naprawa instalacji wodnych i grzewczych.
+            Montaż, naprawa, modernizacja instalacji wodociągowych, kanalizacyjnych, grzewczych, gazowych.
           </p>
 
           <div className="hero__actions" data-intro="body">
-            <Action href={ctaHref()}>Zadzwoń</Action>
+            <Action href={ctaHref('call')}>Zadzwoń</Action>
             <TextAction href="#uslugi">Zobacz usługi</TextAction>
           </div>
-          <div className="hero__scope label" data-intro="body" aria-label="Zakres usług">
-            <span>Od 1997 roku</span><span>Łódź</span><span>Woda i ogrzewanie</span>
+          <div className="hero__scope label" data-intro="body">
+            <span>Od 1997 roku</span><span>Siedziba: Łódź</span><span>Realizacje także poza Łodzią</span>
           </div>
         </div>
 
-        <AssemblyViewer tier={tier} reducedMotion={reduced} />
-      </div>
-
-      <div className="shell hero__stage" data-intro="stage">
-        <div className="hero__stage-head">
-          <div>
-            <p className="label label--indexed"><span className="label__num">01</span> Instalacja</p>
-            <h2 className="display hero__stage-title">Instalacja podtynkowa</h2>
-          </div>
-          <p className="copy hero__stage-note">Rury w ścianach i podłogach.</p>
+        {/* before / after: the work in the wall, then the room handed over */}
+        <div className="hero__pair">
+          <figure className="hero__frame">
+            <img src="/assets/hero-plumbing-installation.png"
+              alt="Łazienka w trakcie montażu: stelaże, podejścia wodne, kanalizacyjne"
+              width="1672" height="941" fetchPriority="high" decoding="async" />
+            <figcaption className="hero__caption"><span className="label">01</span><span className="label">Instalacja</span></figcaption>
+          </figure>
+          <figure className="hero__frame hero__frame--after">
+            <img src="/assets/hero-plumbing-finished.png"
+              alt="Ta sama łazienka po odbiorze, z prysznicem walk-in"
+              width="1672" height="941" decoding="async" />
+            <figcaption className="hero__caption"><span className="label">02</span><span className="label">Odbiór</span></figcaption>
+          </figure>
         </div>
-
-        <XrayStage
-          base="/assets/hero-plumbing-finished.png"
-          hidden="/assets/hero-plumbing-installation.png"
-          alt="Wykończona łazienka z prysznicem walk-in"
-          hiddenAlt="Ta sama łazienka na etapie instalacji: stelaże, podejścia wodne i kanalizacyjne"
-        />
       </div>
     </section>
   )

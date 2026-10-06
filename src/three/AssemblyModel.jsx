@@ -3,151 +3,115 @@ import { useFrame, useThree } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import * as THREE from 'three'
 import { gsap } from '../lib/motion'
-import { ASSEMBLY_URL, applyAssembly, prepareAssembly, partWorldBounds } from './assemblyParts'
+import { ASSEMBLY_URL, applyAssembly, prepareAssembly } from './assemblyParts'
+import { KEYS, poseAt } from './pose'
+import { drawOverlay } from './overlay'
 
 const BASE = new THREE.Quaternion().setFromEuler(new THREE.Euler(0.28, -0.38, -0.12, 'YXZ'))
-const easeOut = t => 1 - Math.pow(1 - THREE.MathUtils.clamp(t, 0, 1), 4)
-const UP = new THREE.Vector3(0, 1, 0)
+const DEG = THREE.MathUtils.DEG2RAD
+const P = new THREE.Vector3()
+// share of the bounding-sphere fit used at dist = 1: the valve fills the
+// stage in the hero, and every pose can still turn freely without cropping
+const FILL = 0.8
 
-// The camera has one writer: this frame controller. GSAP only animates the
-// entrance group and the independent normalized assembly progress.
-export function AssemblyModel({ state, api, route, onReady, reducedMotion, tier }) {
+function sphereRadius(box, center) {
+  const corner = new THREE.Vector3()
+  let radius = 0
+  for (let i = 0; i < 8; i++) {
+    corner.set(i & 1 ? box.max.x : box.min.x, i & 2 ? box.max.y : box.min.y, i & 4 ? box.max.z : box.min.z)
+    radius = Math.max(radius, corner.distanceTo(center))
+  }
+  return radius
+}
+
+// The camera has one writer: this frame controller. Scroll only writes the
+// story position; a manual drag only writes its own offsets on top of it.
+export function AssemblyModel({ state, story, overlay, reducedMotion, offsetX = 0 }) {
   const gltf = useGLTF(ASSEMBLY_URL)
   const data = useMemo(() => prepareAssembly(gltf), [gltf])
-  const entrance = useRef(), scroll = useRef(), drag = useRef()
+  const byId = useMemo(() => new Map(data.parts.map((p) => [p.id, p])), [data])
+  // Framing comes from a bounding sphere, not from the posed silhouette, so
+  // a change of angle or distance reads as a real change on screen.
+  const sphere = useMemo(() => ({
+    assembled: sphereRadius(data.originalBounds, data.center),
+    exploded: sphereRadius(data.originalBounds.clone().union(data.explodedBounds), data.center),
+  }), [data])
+  const drag = useRef()
   const { camera, size } = useThree()
   const rig = useMemo(() => ({
-    revision: -1, elapsed: 2, duration: 1.15, warm: 0, transitioning: false,
-    look: new THREE.Vector3(), fromLook: new THREE.Vector3(), fromPosition: new THREE.Vector3(),
-    position: new THREE.Vector3(), target: new THREE.Vector3(), direction: new THREE.Vector3(),
-    right: new THREE.Vector3(), up: new THREE.Vector3(), point: new THREE.Vector3(), color: new THREE.Color(),
-    rotation: new THREE.Quaternion(), box: new THREE.Box3(),
-    raycaster: new THREE.Raycaster(), pointer: new THREE.Vector2(),
+    fitted: false, explode: -1, enter: 1,
+    look: new THREE.Vector3(), position: new THREE.Vector3(),
+    point: new THREE.Vector3(), corner: new THREE.Vector3(), rotation: new THREE.Quaternion(), box: new THREE.Box3(),
+    goal: {}, view: Object.fromEntries(KEYS.map((k) => [k, 0])),
   }), [])
 
+  // First impression: out of depth, turning in from about -15° on Y.
   useLayoutEffect(() => {
-    api.current = {
-      pick(clientX, clientY, rect) {
-        if (state.current.explodeProgress < 0.98) return null
-        rig.pointer.set((clientX - rect.left) / rect.width * 2 - 1, -(clientY - rect.top) / rect.height * 2 + 1)
-        rig.raycaster.setFromCamera(rig.pointer, camera)
-        data.scene.traverse(mesh => { if (mesh.isSkinnedMesh) { mesh.skeleton.update(); mesh.computeBoundingBox(); mesh.computeBoundingSphere() } })
-        return rig.raycaster.intersectObject(data.scene, true)[0]?.object.userData.partId || null
-      }, data,
-    }
-    onReady()
-    const ctx = gsap.context(() => {
-      if (reducedMotion) return
-      gsap.fromTo(entrance.current.scale, { x: 0.94, y: 0.94, z: 0.94 }, { x: 1, y: 1, z: 1, duration: 0.8, delay: 0.2, ease: 'power3.out' })
-      gsap.fromTo(entrance.current.position, { z: -0.6 }, { z: 0, duration: 0.8, delay: 0.2, ease: 'power3.out' })
-    })
-    return () => { ctx.revert(); api.current = null }
-  }, [api, camera, data, onReady, reducedMotion, rig, state])
+    if (reducedMotion) { rig.enter = 0; return }
+    rig.enter = 1
+    const tween = gsap.to(rig, { enter: 0, duration: 1.9, delay: 0.25, ease: 'power3.out' })
+    return () => tween.kill()
+  }, [reducedMotion, rig])
 
   useFrame((_, rawDelta) => {
-    const dt = Math.min(rawDelta, 0.05), s = state.current
+    const dt = Math.min(rawDelta, 0.05), s = state.current, view = rig.view
+
+    // The pose is a pure function of the story position; this damping only
+    // smooths the step between two scroll events.
+    poseAt(story.current.t, reducedMotion, rig.goal)
+    const k = !rig.fitted || reducedMotion ? 1 : 1 - Math.exp(-4 * dt)
+    for (const key of KEYS) view[key] += (rig.goal[key] - view[key]) * k
+
     const damping = 1 - Math.pow(0.92, dt * 60)
     s.currentX += (s.targetX - s.currentX) * damping
     s.currentY += (s.targetY - s.currentY) * damping
-    drag.current.rotation.set(s.currentX, s.currentY, 0, 'YXZ')
-    scroll.current.position.set(s.exit * 0.7, s.exit * 0.7, 0)
-    scroll.current.scale.setScalar(1 - s.exit * 0.07)
+    drag.current.rotation.set(
+      (view.rx + rig.enter * 4) * DEG + s.currentX,
+      (view.ry - rig.enter * 15) * DEG + s.currentY,
+      view.rz * DEG,
+      'YXZ'
+    )
 
-    if (rig.revision !== s.focusRevision) {
-      rig.revision = s.focusRevision
-      rig.transitioning = true
-      rig.fromPosition.copy(camera.position); rig.fromLook.copy(rig.look)
-      rig.elapsed = 0; rig.duration = reducedMotion ? 0.18 : s.selected ? 1.15 : 1
-      data.parts.forEach(p => { p.pullFrom = p.pull })
+    if (Math.abs(view.explode - rig.explode) > 0.0005) {
+      rig.explode = view.explode
+      applyAssembly(data, view.explode)
     }
-    // Choreography uses elapsed wall time, including slow GPU frames; damping
-    // alone uses a bounded step so low frame rates cannot stretch a 1.15s move.
-    rig.elapsed += rawDelta
-    const t = Math.min(1, rig.elapsed / rig.duration)
-    const selected = data.parts.find(p => p.id === s.selected)
-    data.parts.forEach(p => {
-      // Old part returns first; the next begins separating after 140ms.
-      const chosen = p === selected && s.explodeProgress > 0.98
-      const u = chosen ? easeOut((t - 0.12) / 0.65) : easeOut(t / 0.28)
-      p.pull = THREE.MathUtils.lerp(p.pullFrom, chosen ? 1 : 0, u)
-    })
-    applyAssembly(data, s.explodeProgress)
-    data.scene.updateWorldMatrix(true, true)
-
-    data.materials.forEach(m => {
-      const chosen = m.partId === s.selected, hovered = m.partId === s.hovered
-      const related = selected && data.parts.find(p => p.id === m.partId)?.center.distanceTo(selected.center) < data.span * 0.32
-      const emphasis = !selected || chosen ? 1 : related ? 0.44 : 0.23
-      m.material.opacity = THREE.MathUtils.damp(m.material.opacity, m.opacity * emphasis, reducedMotion ? 30 : 7, rawDelta)
-      m.material.depthWrite = m.material.opacity > 0.95
-      m.mesh.renderOrder = chosen ? 2 : 0
-      const brightness = chosen ? 1.07 : hovered ? 1.04 : selected ? 0.8 : 1
-      m.material.color.lerp(rig.color.copy(m.color).multiplyScalar(brightness), damping)
-      m.material.emissive.copy(m.emissive)
-      m.material.envMapIntensity = THREE.MathUtils.damp(m.material.envMapIntensity, m.intensity * (chosen ? 1.08 : 1), 8, dt)
-    })
 
     const tanY = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))
     const tanX = tanY * size.width / size.height
-    let distance = 0
-    if (selected) {
-      // Actual skin-aware bounds in the live drag hierarchy; no part-specific
-      // camera coordinates. Final pull is included to keep the framing stable.
-      partWorldBounds(data, selected, s.explodeProgress, 1, rig.box)
-      rig.box.getCenter(rig.target)
-      rig.direction.set(...selected.axis).transformDirection(data.scene.parent.matrixWorld).multiplyScalar(0.42)
-      rig.direction.z += 1
-      rig.direction.normalize()
-      rig.right.crossVectors(UP, rig.direction).normalize()
-      rig.up.crossVectors(rig.direction, rig.right).normalize()
-      const fill = tier === 'mobile' ? 0.64 : tier === 'tablet' ? 0.48 : 0.53
-      for (let i = 0; i < 8; i++) {
-        const b = rig.box
-        rig.point.set(i & 1 ? b.max.x : b.min.x, i & 2 ? b.max.y : b.min.y, i & 4 ? b.max.z : b.min.z).sub(rig.target)
-        distance = Math.max(distance, rig.point.dot(rig.direction) + Math.abs(rig.point.dot(rig.right)) / (tanX * fill), rig.point.dot(rig.direction) + Math.abs(rig.point.dot(rig.up)) / (tanY * fill))
-      }
-      const settle = reducedMotion ? 0 : Math.sin(Math.PI * THREE.MathUtils.clamp((t - 0.65) / 0.35, 0, 1)) * 0.01
-      rig.position.copy(rig.target).addScaledVector(rig.direction, distance * (1 - settle))
-    } else {
-      rig.rotation.copy(drag.current.quaternion).multiply(BASE)
-      rig.box.copy(data.originalBounds).union(data.explodedBounds)
-      for (let i = 0; i < 8; i++) {
-        const b = rig.box
-        rig.point.set(i & 1 ? b.max.x : b.min.x, i & 2 ? b.max.y : b.min.y, i & 4 ? b.max.z : b.min.z).sub(data.center).applyQuaternion(rig.rotation)
-        distance = Math.max(distance, rig.point.z + Math.abs(rig.point.x) / (tanX * 0.9), rig.point.z + Math.abs(rig.point.y) / (tanY * 0.9))
-      }
-      rig.warm = THREE.MathUtils.damp(rig.warm, s.inspection ? 1 : 0, 8, dt)
-      rig.target.set(0, 0, 0)
-      // A 25% closer apparent framing in the assembled hero only. Opening the
-      // assembly restores its full breathing room; part focus stays bounds-based.
-      const heroFraming = THREE.MathUtils.lerp(1 / 1.25, 1, s.explodeProgress)
-      rig.position.set(0, 0, distance * heroFraming * (1 + 0.08 * s.explodeProgress) * (1 - rig.warm * 0.035))
+    // The pose's distance sets the scale; the live silhouette only sets a
+    // floor, so a close-up can never crop the valve (pan included).
+    const radius = THREE.MathUtils.lerp(sphere.assembled, sphere.exploded, view.explode)
+    rig.rotation.copy(drag.current.quaternion).multiply(BASE)
+    rig.box.copy(data.originalBounds)
+    rig.box.min.lerp(rig.corner.copy(data.originalBounds.min).min(data.explodedBounds.min), view.explode)
+    rig.box.max.lerp(rig.corner.copy(data.originalBounds.max).max(data.explodedBounds.max), view.explode)
+    // offsetX places the valve within a stage wider than itself (desktop)
+    const x = view.x + offsetX
+    const roomX = tanX * (0.92 - Math.abs(x)), roomY = tanY * (0.92 - Math.abs(view.y))
+    let floor = 0
+    for (let i = 0; i < 8; i++) {
+      const b = rig.box
+      rig.point.set(i & 1 ? b.max.x : b.min.x, i & 2 ? b.max.y : b.min.y, i & 4 ? b.max.z : b.min.z).sub(data.center).applyQuaternion(rig.rotation)
+      floor = Math.max(floor, rig.point.z + Math.abs(rig.point.x) / roomX, rig.point.z + Math.abs(rig.point.y) / roomY)
     }
-
-    if (!s.fitted) {
-      camera.position.copy(rig.position); rig.look.copy(rig.target); s.fitted = true
-      rig.fromPosition.copy(camera.position); rig.fromLook.copy(rig.look)
-    } else if (rig.transitioning) {
-      const u = easeOut(t)
-      camera.position.lerpVectors(rig.fromPosition, rig.position, u)
-      if (!reducedMotion) camera.position.z += Math.sin(Math.PI * t) * distance * 0.035
-      rig.look.lerpVectors(rig.fromLook, rig.target, u)
-      if (t === 1) rig.transitioning = false
+    const z = Math.max(radius / Math.min(tanX, tanY) * FILL * view.dist, floor) * (1 + rig.enter * 0.3)
+    // x / y move the valve on screen by a share of the half-stage
+    const panX = -x * z * tanX
+    const panY = -view.y * z * tanY
+    rig.position.set(panX, panY, z)
+    if (!rig.fitted) {
+      camera.position.copy(rig.position); rig.look.set(panX, panY, 0); rig.fitted = true
     } else {
       camera.position.lerp(rig.position, 1 - Math.exp(-10 * dt))
-      rig.look.lerp(rig.target, 1 - Math.exp(-10 * dt))
+      rig.look.lerp(P.set(panX, panY, 0), 1 - Math.exp(-10 * dt))
     }
     camera.lookAt(rig.look)
     camera.updateMatrixWorld()
+    data.scene.updateWorldMatrix(true, true)
 
-    // Route stops in the margin outside the focused silhouette.
-    if (route.current && selected) {
-      rig.box.getCenter(rig.point).project(camera)
-      const x = THREE.MathUtils.clamp((rig.point.x + 1) * size.width / 2, size.width * 0.3, size.width * 0.7)
-      const y = THREE.MathUtils.clamp((1 - rig.point.y) * size.height / 2, size.height * 0.25, size.height * 0.7)
-      route.current.setAttribute('d', `M 18 ${size.height * 0.78} H ${Math.max(30, x - size.width * 0.32)} V ${y} h ${size.width * 0.055}`)
-    }
+    drawOverlay(overlay.current, { data, byId, camera, size, view })
   })
 
-  return <group ref={entrance} name="heroEntranceGroup"><group ref={scroll} name="heroScrollGroup"><group ref={drag} name="dragRotationGroup"><group quaternion={BASE} name="assemblyRoot"><group position={data.center.clone().negate()}><primitive object={data.scene} /></group></group></group></group></group>
+  return <group ref={drag} name="dragRotationGroup"><group quaternion={BASE} name="assemblyRoot"><group position={data.center.clone().negate()}><primitive object={data.scene} /></group></group></group>
 }

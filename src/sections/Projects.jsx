@@ -1,11 +1,10 @@
-import { useState } from 'react'
 import { Headline } from '../components/Reveal'
 import { Compare } from '../components/Compare'
 
 const PROJECTS = [
   {
     id: 'lazienka',
-    name: 'Woda i kanalizacja',
+    name: 'Woda, kanalizacja',
     scope: 'Instalacja wodna',
     before: '/assets/project-plumbing-before.png',
     after: '/assets/project-plumbing-after.png',
@@ -23,54 +22,42 @@ const PROJECTS = [
   },
 ]
 
+/** Both projects in one column; each comparison sweeps itself on scroll. */
 export function Projects() {
-  const [index, setIndex] = useState(0)
-  const project = PROJECTS[index]
-
   return (
     <section id="realizacje" className="section projects" aria-labelledby="projects-title">
       <div className="shell">
         <div className="projects__head">
-          <div>
-            <p className="label label--indexed">
-              <span className="label__num">04</span> Realizacje
-            </p>
-            <Headline
-              as="h2"
-              size="l"
-              id="projects-title"
-              className="projects__title"
-              lines={['Realizacje']}
-            />
-            <p className="copy projects__intro">Instalacje i naprawy.</p>
-          </div>
-
-          <div className="projects__switch">
-            {PROJECTS.map((p, i) => (
-              <button
-                key={p.id}
-                type="button"
-                className="projects__tab"
-                data-active={i === index}
-                aria-pressed={i === index}
-                onClick={() => setIndex(i)}
-              >
-                <span className="projects__tab-dot" aria-hidden="true" />
-                <span className="projects__tab-name">{p.name}</span>
-              </button>
-            ))}
-          </div>
+          <p className="label label--indexed">
+            <span className="label__num">04</span> Realizacje
+          </p>
+          <Headline
+            as="h2"
+            size="l"
+            id="projects-title"
+            className="projects__title"
+            lines={['Realizacje']}
+          />
+          <p className="copy projects__intro">Instalacje, naprawy, modernizacje.</p>
         </div>
 
-        <div className="projects__stage" aria-live="polite">
-          <Compare
-            key={project.id}
-            before={project.before}
-            after={project.after}
-            beforeAlt={project.beforeAlt}
-            afterAlt={project.afterAlt}
-          />
-          <p className="label projects__scope">{project.scope}</p>
+        <div className="projects__list">
+          {PROJECTS.map((project, i) => (
+            <article className="project" key={project.id} aria-labelledby={`project-${project.id}`}>
+              <div className="project__head">
+                <h3 className="label label--indexed project__name" id={`project-${project.id}`}>
+                  <span className="label__num">{String(i + 1).padStart(2, '0')}</span> {project.name}
+                </h3>
+                <p className="label">{project.scope}: przed, po</p>
+              </div>
+              <Compare
+                before={project.before}
+                after={project.after}
+                beforeAlt={project.beforeAlt}
+                afterAlt={project.afterAlt}
+              />
+            </article>
+          ))}
         </div>
       </div>
     </section>

@@ -18,4 +18,3 @@ export function useMediaQuery(query) {
 
 export const useReducedMotion = () => useMediaQuery('(prefers-reduced-motion: reduce)')
 export const useIsMobile = () => useMediaQuery('(max-width: 860px)')
-export const useHasFinePointer = () => useMediaQuery('(hover: hover) and (pointer: fine)')

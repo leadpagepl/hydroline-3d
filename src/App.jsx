@@ -1,9 +1,8 @@
 import { useEffect } from 'react'
 import { Header } from './sections/Header'
 import { Hero } from './sections/Hero'
-import { Approach } from './sections/Approach'
+import { Scope } from './sections/Scope'
 import { Services } from './sections/Services'
-import { Process } from './sections/Process'
 import { Emergency } from './sections/Emergency'
 import { Projects } from './sections/Projects'
 import { About } from './sections/About'
@@ -32,9 +31,8 @@ export default function App() {
       <main id="main">
         <span id="top" />
         <Hero />
-        <Approach />
+        <Scope />
         <Services />
-        <Process />
         <Emergency />
         <Projects />
         <About />
